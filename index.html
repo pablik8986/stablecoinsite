@@ -9,26 +9,45 @@
   <style>
     :root { --neon:#39ff14; --neon-soft:rgba(57,255,20,0.35); --text:#fff; --card:#000; }
     *{box-sizing:border-box}
-    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial; color:var(--text); background:#000; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px; overflow-x:hidden;}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial; color:var(--text); background:#000; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:40px 20px; overflow-x:hidden; position:relative;}
 
     body::before, body::after{content:""; position:fixed; top:0; width:120px; height:100%; background:radial-gradient(circle at center, var(--neon) 0%, transparent 70%); opacity:.25; z-index:0}
     body::before{left:0} body::after{right:0}
 
-    h1{font-family:'Orbitron',ui-sans-serif; font-size:clamp(28px,5vw,50px); margin:0 0 10px; text-shadow:0 0 10px var(--neon-soft); position:relative; z-index:1; display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
-    .subtitle{opacity:.9; margin:0 0 26px; position:relative; z-index:1}
+    h1{font-family:'Orbitron',ui-sans-serif; font-size:clamp(28px,5vw,50px); margin:0 0 10px; text-shadow:0 0 10px var(--neon-soft); position:relative; z-index:10; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+    .title-text{display:inline-block; margin:0 6px; position:relative; z-index:11;}
+    .subtitle{opacity:.9; margin:0 0 26px; position:relative; z-index:10}
 
     .mic-icon{
       width:100px; height:100px;
       background:url('mic.png') no-repeat center/contain;
       filter:drop-shadow(0 0 6px var(--neon)) drop-shadow(0 0 12px var(--neon));
       animation:glowPulse 1.5s infinite alternate;
+      position:relative;
+      z-index:11;
     }
     @keyframes glowPulse{
       from{filter:drop-shadow(0 0 6px var(--neon)) drop-shadow(0 0 12px var(--neon))}
       to{filter:drop-shadow(0 0 16px var(--neon)) drop-shadow(0 0 28px var(--neon))}
     }
 
-    .podcast-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; width:100%; max-width:1200px; position:relative; z-index:1}
+    /* Floating coin icons */
+    .coin-icon{
+      position:absolute;
+      width:48px; height:48px;
+      border-radius:50%;
+      border:2px solid var(--neon);
+      box-shadow:0 0 10px var(--neon), 0 0 20px var(--neon-soft);
+      background-size:70%;
+      background-repeat:no-repeat;
+      background-position:center;
+      animation:floatY 3s ease-in-out infinite;
+      z-index:1;
+      pointer-events:none;
+    }
+    @keyframes floatY{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+
+    .podcast-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; width:100%; max-width:1200px; position:relative; z-index:2}
     .podcast-card{background:rgba(0,0,0,.75); border:2px solid var(--neon); border-radius:12px; padding:16px; box-shadow:0 0 16px var(--neon-soft); transition:transform .15s ease, box-shadow .15s ease}
     .podcast-card:hover{transform:translateY(-4px); box-shadow:0 0 24px var(--neon)}
     .podcast-card h2{margin:0 0 10px; font-size:18px; color:var(--neon)}
@@ -36,153 +55,55 @@
     .podcast-card a{display:inline-block; margin-top:10px; color:var(--text); text-decoration:none; font-weight:700; border:1px solid var(--neon); padding:6px 12px; border-radius:8px; transition:background .2s ease,color .2s ease}
     .podcast-card a:hover{background:var(--neon); color:#000}
 
-    .cursor-circle{
-      position:fixed;
-      top:0; left:0;
-      width:20px; height:20px;
-      border:2px solid var(--neon);
-      border-radius:50%;
-      pointer-events:none;
-      transform:translate(-50%,-50%);
-      box-shadow:0 0 12px var(--neon);
-      z-index:9999;
-    }
-    .trail{
-      position:fixed;
-      width:10px; height:10px;
-      border-radius:50%;
-      background:var(--neon);
-      pointer-events:none;
-      opacity:0.7;
-      transform:translate(-50%,-50%);
-      animation:fadeOut 0.6s forwards;
-      z-index:9998;
-    }
-    @keyframes fadeOut{
-      to{opacity:0; transform:translate(-50%,-50%) scale(0.3)}
-    }
+    .cursor-circle{ position:fixed; top:0; left:0; width:20px; height:20px; border:2px solid var(--neon); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); box-shadow:0 0 12px var(--neon); z-index:9999; }
+    .trail{ position:fixed; width:10px; height:10px; border-radius:50%; background:var(--neon); pointer-events:none; opacity:0.7; transform:translate(-50%,-50%); animation:fadeOut 0.6s forwards; z-index:9998; }
+    @keyframes fadeOut{ to{opacity:0; transform:translate(-50%,-50%) scale(0.3)} }
+
+    footer{ margin-top:40px; text-align:center; position:relative; z-index:2; }
+    .twitter-icon{ width:40px; height:40px; background:url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg') no-repeat center/contain; filter:invert(64%) sepia(94%) saturate(421%) hue-rotate(66deg) brightness(120%) drop-shadow(0 0 6px var(--neon)); display:inline-block; transition:transform 0.2s ease, filter 0.2s ease; }
+    .twitter-icon:hover{ transform:scale(1.15); filter:drop-shadow(0 0 12px var(--neon)); }
   </style>
 </head>
 <body>
   <h1>
     <span class="mic-icon"></span>
-    Stablecoin Podcasts
+    <span class="title-text">Stablecoin Podcasts</span>
   </h1>
   <p class="subtitle">This site will have podcasts about stablecoins</p>
 
   <div id="list" class="podcast-list"></div>
   <div class="cursor-circle" id="cursor"></div>
 
+  <!-- Floating coin icons -->
+  <div id="coin-container"></div>
+
+  <footer>
+    <a href="https://x.com/PavloAmb" target="_blank" rel="noopener">
+      <span class="twitter-icon"></span>
+    </a>
+  </footer>
+
   <script>
     const episodes = [];
 
-    episodes.push({
-      title: "Stablecoins & the Future Financial System",
-      desc: "Discuss real cases of implementing stablecoins in business systems (Stripe, SpaceX), current regulatory trends.",
-      url: "https://podcasts.apple.com/us/podcast/stablecoins-the-future-financial-system/id842818711?i=1000716476064"
-    });
-
-    episodes.push({
-      title: "Chris Dixon: Stablecoins, Startups, and the Crypto Stack",
-      desc: "Discuss the role of stablecoins as internet money, programmable financial infrastructure, regulatory trends, and AI.",
-      url: "https://podcasts.apple.com/us/podcast/chris-dixon-stablecoins-startups-and-the-crypto-stack/id842818711?i=1000712071346"
-    });
-
-    episodes.push({
-      title: "Wobbly Foundations of the Stablecoin Boom",
-      desc: "Analyst Dan Davies explains the potential risks of integrating stablecoins into the traditional banking system.",
-      url: "https://www.reuters.com/podcasts/wobbly-foundations-stablecoin-boom-podcast-2025-06-17/"
-    });
-
-    episodes.push({
-      title: "Stablecoins (Reuters)",
-      desc: "A conversation with Hyun Song Shin (BIS) highlighting why stablecoins cannot be a worthy replacement for traditional money, and a use case in Turkey.",
-      url: "https://www.reuters.com/podcasts/stablecoins-2025-07-02/"
-    });
-
-    episodes.push({
-      title: "Crypto 2025 (Reuters)",
-      desc: "Discuss the popularity of digital assets, including stablecoins, and their role in the financial ecosystem.",
-      url: "https://www.reuters.com/podcasts/crypto-2025-06-11/"
-    });
-
-    episodes.push({
-      title: "Stablecoin Regulations and Risks (FT)",
-      desc: "Discuss stablecoin regulations, the risks of mass redemptions, and how banking instability (SVB) could affect this industry.",
-      url: "https://www.ft.com/content/e11746e8-1c20-4eda-969a-d7d71577b883"
-    });
-
-    episodes.push({
-      title: "Future of Stablecoins — Luca Prosperi (Galaxy)",
-      desc: "Discuss the design, markets, and future of stablecoins.",
-      url: "https://www.galaxy.com/insights/podcasts/galaxy-brains/future-of-stablecoins-w-luca-prosperi"
-    });
-
-    episodes.push({
-      title: "Stablecoins Uncovered (YouTube)",
-      desc: "An in-depth interview-discussion on the impact of stablecoins on the financial system.",
-      url: "https://youtu.be/pE-rQDs26FY"
-    });
-
-    episodes.push({
-      title: "Stablecoins & Dollar Dominance (YouTube)",
-      desc: "An analytical conversation with Vance Spencer and Michael Anderson about the role of stablecoins in the global dominance of the dollar.",
-      url: "https://youtu.be/tx5vOLpGK2c"
-    });
-
-    episodes.push({
-      title: "a16z Podcast — Stablecoins with Ali Yahya & Arianna Simpson",
-      desc: "a16z Podcast discussion with Ali Yahya and Arianna Simpson about the prospects of stablecoins in financial infrastructure.",
-      url: "https://youtu.be/0biSwEL5eMQ"
-    });
-
-    episodes.push({
-      title: "Stablecoins & Agora Platform (YouTube)",
-      desc: "Analytical content about new technologies in stablecoins — with the features of the Agora platform.",
-      url: "https://youtu.be/vEIP4gR3m1Q"
-    });
-
-    episodes.push({
-      title: "BlackRock on Stablecoins (YouTube)",
-      desc: "A black call from BlackRock about the prospects of stablecoins against a backdrop of economic uncertainty.",
-      url: "https://www.youtube.com/watch?v=8xk65pGbD5s&t=9s"
-    });
-
-    episodes.push({
-      title: "Breaking Banks Africa — Stablecoin Use",
-      desc: "The fifth episode of Breaking Banks Africa focuses on the local context of stablecoin use in Africa.",
-      url: "https://youtu.be/S4Mg-AVUdRA"
-    });
-
-    episodes.push({
-      title: "Web3 Show — Stablecoin Types & Mechanisms",
-      desc: "Web3 show format explaining the types of stablecoins and their mechanisms.",
-      url: "https://youtu.be/-zKKjchohEg"
-    });
-
-    episodes.push({
-      title: "Circle CEO Interview (YouTube)",
-      desc: "Interview with the CEO of Circle about the business model and role of stablecoins.",
-      url: "https://youtu.be/Y54N6NtwkeE"
-    });
-
-    episodes.push({
-      title: "Stablecoins as Alternative Money (YouTube)",
-      desc: "A podcast episode examining stablecoins as an alternative to traditional money.",
-      url: "https://youtu.be/uvGNCE4MpuY"
-    });
-
-    episodes.push({
-      title: "Stablecoin Sector Trends (YouTube)",
-      desc: "Current strategic picture and trends in the sector.",
-      url: "https://youtu.be/m8S8PkiXVBg"
-    });
-
-    episodes.push({
-      title: "Interview — Andrew MacKenzie (Agant/GBPA)",
-      desc: "Interview with Andrew MacKenzie, founder of Agant (known as the GBPA project), about the next era of stablecoins.",
-      url: "https://youtu.be/vHQX25kLhu0"
-    });
+    episodes.push({ title: "Stablecoins & the Future Financial System", desc: "Discuss real cases of implementing stablecoins in business systems (Stripe, SpaceX), current regulatory trends.", url: "https://podcasts.apple.com/us/podcast/stablecoins-the-future-financial-system/id842818711?i=1000716476064" });
+    episodes.push({ title: "Chris Dixon: Stablecoins, Startups, and the Crypto Stack", desc: "Discuss the role of stablecoins as internet money, programmable financial infrastructure, regulatory trends, and AI.", url: "https://podcasts.apple.com/us/podcast/chris-dixon-stablecoins-startups-and-the-crypto-stack/id842818711?i=1000712071346" });
+    episodes.push({ title: "Wobbly Foundations of the Stablecoin Boom", desc: "Analyst Dan Davies explains the potential risks of integrating stablecoins into the traditional banking system.", url: "https://www.reuters.com/podcasts/wobbly-foundations-stablecoin-boom-podcast-2025-06-17/" });
+    episodes.push({ title: "Stablecoins (Reuters)", desc: "A conversation with Hyun Song Shin (BIS) highlighting why stablecoins cannot be a worthy replacement for traditional money, and a use case in Turkey.", url: "https://www.reuters.com/podcasts/stablecoins-2025-07-02/" });
+    episodes.push({ title: "Crypto 2025 (Reuters)", desc: "Discuss the popularity of digital assets, including stablecoins, and their role in the financial ecosystem.", url: "https://www.reuters.com/podcasts/crypto-2025-06-11/" });
+    episodes.push({ title: "Stablecoin Regulations and Risks (FT)", desc: "Discuss stablecoin regulations, the risks of mass redemptions, and how banking instability (SVB) could affect this industry.", url: "https://www.ft.com/content/e11746e8-1c20-4eda-969a-d7d71577b883" });
+    episodes.push({ title: "Future of Stablecoins — Luca Prosperi (Galaxy)", desc: "Discuss the design, markets, and future of stablecoins.", url: "https://www.galaxy.com/insights/podcasts/galaxy-brains/future-of-stablecoins-w-luca-prosperi" });
+    episodes.push({ title: "Stablecoins Uncovered (YouTube)", desc: "An in-depth interview-discussion on the impact of stablecoins on the financial system.", url: "https://youtu.be/pE-rQDs26FY" });
+    episodes.push({ title: "Stablecoins & Dollar Dominance (YouTube)", desc: "An analytical conversation with Vance Spencer and Michael Anderson about the role of stablecoins in the global dominance of the dollar.", url: "https://youtu.be/tx5vOLpGK2c" });
+    episodes.push({ title: "a16z Podcast — Stablecoins with Ali Yahya & Arianna Simpson", desc: "a16z Podcast discussion with Ali Yahya and Arianna Simpson about the prospects of stablecoins in financial infrastructure.", url: "https://youtu.be/0biSwEL5eMQ" });
+    episodes.push({ title: "Stablecoins & Agora Platform (YouTube)", desc: "Analytical content about new technologies in stablecoins — with the features of the Agora platform.", url: "https://youtu.be/vEIP4gR3m1Q" });
+    episodes.push({ title: "BlackRock on Stablecoins (YouTube)", desc: "A black call from BlackRock about the prospects of stablecoins against a backdrop of economic uncertainty.", url: "https://www.youtube.com/watch?v=8xk65pGbD5s&t=9s" });
+    episodes.push({ title: "Breaking Banks Africa — Stablecoin Use", desc: "The fifth episode of Breaking Banks Africa focuses on the local context of stablecoin use in Africa.", url: "https://youtu.be/S4Mg-AVUdRA" });
+    episodes.push({ title: "Web3 Show — Stablecoin Types & Mechanisms", desc: "Web3 show format explaining the types of stablecoins and their mechanisms.", url: "https://youtu.be/-zKKjchohEg" });
+    episodes.push({ title: "Circle CEO Interview (YouTube)", desc: "Interview with the CEO of Circle about the business model and role of stablecoins.", url: "https://youtu.be/Y54N6NtwkeE" });
+    episodes.push({ title: "Stablecoins as Alternative Money (YouTube)", desc: "A podcast episode examining stablecoins as an alternative to traditional money.", url: "https://youtu.be/uvGNCE4MpuY" });
+    episodes.push({ title: "Stablecoin Sector Trends (YouTube)", desc: "Current strategic picture and trends in the sector.", url: "https://youtu.be/m8S8PkiXVBg" });
+    episodes.push({ title: "Interview — Andrew MacKenzie (Agant/GBPA)", desc: "Interview with Andrew MacKenzie, founder of Agant (known as the GBPA project), about the next era of stablecoins.", url: "https://youtu.be/vHQX25kLhu0" });
 
     const list = document.getElementById('list');
     list.innerHTML = episodes.map(ep => `
@@ -192,6 +113,34 @@
         <a href="${ep.url}" target="_blank" rel="noopener">Listen</a>
       </div>
     `).join('');
+
+    // Floating random USDT and USDC coins across whole page
+    const coinContainer = document.getElementById('coin-container');
+    const coinImages = [
+      'https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/svg/color/usdt.svg',
+      'https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/svg/color/usdc.svg'
+    ];
+    for (let i=0; i<20; i++){
+      const coin = document.createElement('div');
+      coin.className = 'coin-icon';
+      coin.style.left = Math.random()*90 + '%';
+      coin.style.top = Math.random()*90 + '%';
+      coin.style.backgroundImage = `url(${coinImages[Math.floor(Math.random()*coinImages.length)]})`;
+      coin.style.animationDelay = (Math.random()*2)+'s';
+      coinContainer.appendChild(coin);
+    }
+
+    // A few coins near the title but behind text
+    for (let i=0; i<4; i++){
+      const coin = document.createElement('div');
+      coin.className = 'coin-icon';
+      coin.style.left = (40 + Math.random()*20) + '%';
+      coin.style.top = (5 + Math.random()*10) + '%';
+      coin.style.backgroundImage = `url(${coinImages[Math.floor(Math.random()*coinImages.length)]})`;
+      coin.style.animationDelay = (Math.random()*2)+'s';
+      coin.style.zIndex = 5; // lower than title text
+      coinContainer.appendChild(coin);
+    }
 
     const cursor = document.getElementById('cursor');
     document.addEventListener('mousemove', e => {
